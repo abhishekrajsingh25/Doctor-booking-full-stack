@@ -217,11 +217,11 @@ This ensures:
    Create a .env file in the root directory of the notification service with the following:
    ```bash
    PORT=5001
-    MONGODB_URI=your_url
-
-    BREVO_USERNAME=your_name
-    BREVO_PASSWORD=your_pass
-    BREVO_FROM_EMAIL=your_gmail
+   MONGODB_URI=your_url
+   BREVO_USERNAME=your_name
+   BREVO_PASSWORD=your_pass
+   BREVO_FROM_EMAIL=your_gmail
+   RABBITMQ_URL=your_url
    ```
 
 9. **Environment Variables Setup**
@@ -229,6 +229,7 @@ This ensures:
    ```bash
    PORT=5002
    DATABASE_URL=your_url
+   KAFKA_BROKER=localhost:9092
    ```
    
 ### Running the Application
