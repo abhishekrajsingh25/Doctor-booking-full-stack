@@ -1,6 +1,7 @@
-# 🏥 Doctor Appointment Booking System with Admin and Doctor Panel
+# 🏥 Doctor Appointment Booking System with Admin and Doctor Panel – Microservices-Based Full Stack Application
 
-This is a full-stack Doctor Appointment Booking web application designed to streamline the process of scheduling appointments between patients and doctors. The system includes separate interfaces for **Patients**, **Doctors**, and an **Admin Panel** to manage users, appointments, and schedules.
+This is a full-stack Doctor Appointment Booking System designed to streamline appointment scheduling between patients and doctors.
+The project evolved from a monolithic backend into a microservices-oriented architecture, incorporating Redis caching, event-driven notification handling, and audit logging, while maintaining separate interfaces for **Patients**, **Doctors**, and **Admin**.
 ---
 
 ## ✨ Features
@@ -10,6 +11,7 @@ This is a full-stack Doctor Appointment Booking web application designed to stre
 - Browse and search doctors by specialization
 - Book or cancel appointments
 - View appointment history and upcoming schedules
+- Secure online payments
 - Responsive and user-friendly interface
 
 ### Doctor Panel Features:
@@ -23,6 +25,16 @@ This is a full-stack Doctor Appointment Booking web application designed to stre
 - Add new doctor 
 - Dashboard with overall statistics
 - Manage appointments (View, Update, Cancel)
+
+## Architecture Highlights
+- Modular backend designed for microservices  
+- Event-driven communication between services  
+- Asynchronous processing using RabbitMQ and Kafka  
+- Redis caching and distributed locking for performance and consistency  
+- Dedicated Notification Service for email delivery  
+- Dedicated Audit Service for system event tracking  
+- Fault-tolerant messaging using Dead Letter Queues (DLQ)  
+- Designed with serverless deployment constraints in mind
 
 ## Tech Stack
 
@@ -40,19 +52,95 @@ This is a full-stack Doctor Appointment Booking web application designed to stre
 - Multer for image uploads
 - Razorpay integration for payments
 
-### Additional Tools:
+## 🧱 Microservices
 
-- Cloudinary (for image storage)
-- dotenv (for environment variables management)
-- Bcrypt (for password hashing)
-- Cors (for handling cross-origin requests)
+### Notification Service
+- Consumes events asynchronously  
+- Sends appointment and payment-related emails  
+- Implements retry handling with DLQ and delayed retries  
+
+### Audit Service
+- Stores all system events for traceability  
+- Uses PostgreSQL for structured audit logs  
+- Designed as a write-heavy, append-only service
+
+## 📬 Messaging & Event Streaming
+
+### RabbitMQ (Event Queue + DLQ)
+Used for **reliable event delivery**:
+
+- Backend publishes domain events such as:
+  - `APPOINTMENT_BOOKED`
+  - `APPOINTMENT_CANCELLED`
+  - `PAYMENT_SUCCESS`
+- Notification Service consumes events asynchronously  
+- Dead Letter Queue (DLQ) handles failed messages  
+- Retry mechanism with delayed retries using TTL queues  
+- Prevents message loss and retry storms  
+
+### Kafka (Event Streaming)
+Used for **event streaming and audit consistency**:
+
+- Backend produces events to Kafka topics  
+- Audit Service consumes Kafka events independently  
+- Enables:
+  - Loose coupling between services  
+  - Replayable event history  
+  - Scalable audit logging  
+- RabbitMQ and Kafka are used together to demonstrate different messaging patterns  
+
+---
+  
+## ⚡ Caching & Performance
+
+### Redis (Upstash)
+Used as a performance optimization layer:
+
+- Cache doctor listings  
+- Cache dashboards (Admin and Doctor)  
+- Cache user appointments  
+- Distributed locking to prevent double booking of slots  
+
+### Cache Invalidation
+Handled on:
+- Appointment booking  
+- Appointment cancellation  
+- Profile updates  
+- Payment confirmation  
+
+The system is designed so that:
+- Redis failures do not break core functionality  
+- MongoDB remains the source of truth  
+
+---
+
+## 🔔 Notification & Audit Flow
+
+1. User books, cancels, or pays for an appointment  
+2. Backend publishes an event  
+3. RabbitMQ delivers the event to Notification Service  
+4. Emails are sent asynchronously  
+5. Failed messages are routed to DLQ and retried with delay  
+6. Kafka streams the same events to Audit Service  
+7. Audit Service stores events for traceability and debugging  
+
+This ensures:
+- Non-blocking user experience  
+- Reliable message processing  
+- Clear separation of concerns  
+
+---
+
 
 ## Setup Instructions
 
 ### Prerequisites:
 
-- Node.js and npm installed
-- MongoDB installed or a cloud MongoDB database (MongoDB Atlas)
+- Node.js and npm  
+- MongoDB (local or Atlas)  
+- Redis (Upstash recommended)  
+- RabbitMQ (CloudAMQP or local)  
+- Kafka (local via Docker for development)  
 
 ### Installation
 
@@ -79,8 +167,20 @@ This is a full-stack Doctor Appointment Booking web application designed to stre
    cd ../admin
    npm install
    ```
+  
+5. **Install Notification Service Dependencies**
+   ```bash
+   cd ../notification-service
+   npm install
+   ```
+
+6. **Install Audit Service Dependencies**
+   ```bash
+   cd ../audit-service
+   npm install
+   ```
    
-5. **Environment Variables Setup**
+7. **Environment Variables Setup**
    Create a .env file in the root directory of the backend with the following:
    ```bash
    MONGODB_URI = your_mongo_database_uri
@@ -93,19 +193,42 @@ This is a full-stack Doctor Appointment Booking web application designed to stre
    RAZORPAY_KEY_SECRET = your_razorpay_secret_key
    RAZORPAY_KEY_ID = your_razorpay_key_id
    CURRENCY = your_currency
+   REDIS_URL=your_upstash_redis_url
+   NOTIFICATION_SERVICE_URL=your_notification_service_url
+   AUDIT_SERVICE_URL=your_audit_service_url
+   RABBITMQ_URL=your_rabbitmq_url
+   KAFKA_BROKER=localhost:9092
    ```
 
-6. **Environment Variables Setup**
+8. **Environment Variables Setup**
    Create a .env file in the root directory of the frontend with the following:
    ```bash
    VITE_BACKEND_URL = "http://localhost:4000"
    VITE_RAZORPAY_KEY_ID = your_razorpay_key_id
    ```
    
-7. **Environment Variables Setup**
+9. **Environment Variables Setup**
    Create a .env file in the root directory of the admin panel with the following:
    ```bash
    VITE_BACKEND_URL = "http://localhost:4000"
+   ```
+
+9. **Environment Variables Setup**
+   Create a .env file in the root directory of the notification service with the following:
+   ```bash
+   PORT=5001
+    MONGODB_URI=your_url
+
+    BREVO_USERNAME=your_name
+    BREVO_PASSWORD=your_pass
+    BREVO_FROM_EMAIL=your_gmail
+   ```
+
+9. **Environment Variables Setup**
+   Create a .env file in the root directory of the audit service with the following:
+   ```bash
+   PORT=5002
+   DATABASE_URL=your_url
    ```
    
 ### Running the Application
@@ -131,12 +254,29 @@ This is a full-stack Doctor Appointment Booking web application designed to stre
    ```
    The admin panel should now be running on `http://localhost:5174`.
 
+4. **Start the Notification Service**
+   ```bash
+   cd ../notification-service
+   npm run dev
+   ```
+   The notification-service should now be running on `http://localhost:5001`.
+
+5. **Start the Audit Service**
+   ```bash
+   cd ../audit-service
+   npm run dev
+   ```
+   The audit-service should now be running on `http://localhost:5002`.
+
 ## Deployment
 
 - The frontend can be deployed using Vercel.
 - The backend can be deployed using Vercel.
 - The admin can be deployed using Vercel.
 - MongoDB can be hosted on MongoDB Atlas.
+- Redis can be hosted on Upstash
+- RabbitMQ can be hosted on CloudAMQP
+- Kafka: Local (Docker) for development
 
 ## Contributing
 
