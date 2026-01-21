@@ -32,7 +32,8 @@ The project evolved from a monolithic backend into a microservices-oriented arch
 - Asynchronous processing using RabbitMQ and Kafka  
 - Redis caching and distributed locking for performance and consistency  
 - Dedicated Notification Service for email delivery  
-- Dedicated Audit Service for system event tracking  
+- Dedicated Audit Service for system event tracking
+- Prometheus and Grafana used for audit service observability and alerting
 - Fault-tolerant messaging using Dead Letter Queues (DLQ)  
 - Designed with serverless deployment constraints in mind
 
@@ -173,7 +174,9 @@ The system includes basic observability using Prometheus and Grafana to monitor 
 - MongoDB (local or Atlas)  
 - Redis (Upstash recommended)  
 - RabbitMQ (CloudAMQP or local)  
-- Kafka (local via Docker for development)  
+- Kafka (local via Docker for development)
+- Prometheus (for metrics collection)
+- Grafana (for dashboards and alerting)
 
 ### Installation
 
@@ -311,6 +314,7 @@ The system includes basic observability using Prometheus and Grafana to monitor 
 - Redis can be hosted on Upstash
 - RabbitMQ can be hosted on CloudAMQP
 - Kafka: Local (Docker) for development
+- Prometheus and Grafana are typically run as standalone services for monitoring.
 
 ## Contributing
 
