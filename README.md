@@ -131,6 +131,39 @@ This ensures:
 
 ---
 
+## 📊 Monitoring & Observability
+
+The system includes basic observability using Prometheus and Grafana to monitor the health and behavior of the Audit Service.
+
+### Metrics Collection (Prometheus)
+- The Audit Service exposes a `/metrics` endpoint using Prometheus client libraries.
+- Prometheus scrapes metrics at a fixed interval.
+- Metrics collected include:
+  - Total audit events processed
+  - Audit events per type (BOOKED, CANCELLED, PAYMENT_SUCCESS)
+  - Audit insert failure count
+  - Default Node.js runtime metrics (CPU, memory, event loop)
+
+### Visualization (Grafana)
+- Grafana is connected to Prometheus as a data source.
+- A dashboard is created to visualize:
+  - Audit events per minute
+  - Total audit events processed
+  - Audit insert failures
+- Metrics are visualized using time-series graphs and stat panels.
+
+### Alerting
+- Grafana Alerting is used to monitor critical conditions.
+- An alert rule is configured for:
+  - Audit insert failures (fires when failures > 0)
+- Alerts are organized under a dedicated alert folder for clarity.
+
+### Benefits
+- Real-time visibility into audit event flow
+- Early detection of audit logging failures
+- Clear separation between business logic and monitoring
+- Lightweight setup without impacting core application performance
+
 
 ## Setup Instructions
 
