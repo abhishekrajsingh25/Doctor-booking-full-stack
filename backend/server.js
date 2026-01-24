@@ -10,6 +10,9 @@ import userRouter from "./routes/userRoute.js";
 import { initRabbitMQ } from "./messaging/rabbitmq.js";
 import { initKafka } from "./messaging/kafka.js";
 
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./config/swagger.js";
+
 //App Config
 const app = express();
 const port = process.env.PORT || 4000;
@@ -22,6 +25,8 @@ await initKafka();
 //Middlewares
 app.use(express.json());
 app.use(cors());
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 //api endpoints
 app.use("/api/user", userRouter);
