@@ -133,6 +133,31 @@ doctorRouter.get("/profile", authDoctor, doctorProfile);
  *     tags: [Doctor]
  *     security:
  *       - DoctorAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               fees:
+ *                 type: number
+ *                 example: 500
+ *               available:
+ *                 type: boolean
+ *                 example: true
+ *               address:
+ *                 type: object
+ *                 properties:
+ *                   line:
+ *                     type: string
+ *                     example: "MG Road"
+ *                   line2:
+ *                     type: string
+ *                     example: "Bangalore"
+ *     responses:
+ *       200:
+ *         description: Profile updated successfully
  */
 doctorRouter.post("/update-profile", authDoctor, updateDoctorProfile);
 
