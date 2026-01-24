@@ -117,10 +117,43 @@ userRouter.get("/get-profile", authUser, getProfile);
  *     tags: [User]
  *     security:
  *       - UserAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - phone
+ *               - dob
+ *               - gender
+ *             properties:
+ *               name:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               dob:
+ *                 type: string
+ *               gender:
+ *                 type: string
+ *                 enum: [Male, Female, Other]
+ *               address:
+ *                 type: string
+ *                 description: JSON string (e.g. {"line":"Delhi","line2":"India"})
+ *               image:
+ *                 type: string
+ *                 format: binary
  *     responses:
- *       200: { description: Profile updated }
+ *       200:
+ *         description: Profile updated successfully
  */
-userRouter.post("/update-profile", upload.single("image"), authUser, updateProfile);
+userRouter.post(
+  "/update-profile",
+  upload.single("image"),
+  authUser,
+  updateProfile
+);
 
 /**
  * @swagger
