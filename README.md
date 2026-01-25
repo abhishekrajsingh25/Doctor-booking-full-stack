@@ -36,6 +36,7 @@ The project evolved from a monolithic backend into a microservices-oriented arch
 - Prometheus and Grafana used for audit service observability and alerting
 - Fault-tolerant messaging using Dead Letter Queues (DLQ)  
 - Designed with serverless deployment constraints in mind
+- Swagger (OpenAPI) used for REST API documentation and testing
 
 ## Tech Stack
 
@@ -52,6 +53,25 @@ The project evolved from a monolithic backend into a microservices-oriented arch
 - JWT Authentication
 - Multer for image uploads
 - Razorpay integration for payments
+
+## 📘 API Documentation (Swagger / OpenAPI)
+
+The backend exposes interactive API documentation using **Swagger (OpenAPI)**.
+
+Swagger provides a clear and interactive interface to:
+- Explore all available REST APIs
+- Understand request and response formats
+- Test APIs directly from the browser
+- Authenticate using JWT for protected endpoints
+
+### Features
+- Organized APIs by **User**, **Doctor**, and **Admin**
+- JWT-based authentication support inside Swagger UI
+- Supports `multipart/form-data` for file uploads (profile image updates)
+- Environment-aware server configuration
+
+### Access Swagger UI
+`http://localhost:4000/api-docs`
 
 ## 🧱 Microservices
 
