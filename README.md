@@ -1,7 +1,31 @@
 # 🏥 Doctor Appointment Booking System with Admin and Doctor Panel – Microservices-Based Full Stack Application
 
 This is a full-stack Doctor Appointment Booking System designed to streamline appointment scheduling between patients and doctors.
+
 The project evolved from a monolithic backend into a microservices-oriented architecture, incorporating Redis caching, event-driven notification handling, and audit logging, while maintaining separate interfaces for **Patients**, **Doctors**, and **Admin**.
+
+In addition to the web platform, the system also includes a **React Native mobile application**, allowing patients to book appointments and manage their healthcare directly from their smartphones.
+
+---
+
+# 📱 Mobile Application (React Native)
+
+A **React Native mobile application** has also been developed to extend the platform to mobile users.
+
+The mobile app allows patients to access the system conveniently from their phones while maintaining the same backend and authentication system used by the web application.
+
+### Mobile App Features
+
+- Patient registration and login
+- Browse doctors by specialization
+- AI-powered doctor recommendation based on symptoms
+- Book and cancel appointments
+- View upcoming appointments
+- Secure online payments
+- Mobile-friendly UI for seamless user experience
+
+The mobile application communicates with the **same REST APIs used by the web platform**, ensuring consistency across devices.
+
 ---
 
 ## ✨ Features
@@ -30,7 +54,8 @@ The project evolved from a monolithic backend into a microservices-oriented arch
 - Modular backend designed for microservices  
 - Event-driven communication between services  
 - Asynchronous processing using RabbitMQ and Kafka  
-- Redis caching and distributed locking for performance and consistency  
+- Redis caching and distributed locking for performance and consistency
+- AI-driven doctor recommendation integrated at the API layer with strict domain constraints
 - Dedicated Notification Service for email delivery  
 - Dedicated Audit Service for system event tracking
 - Prometheus and Grafana used for audit service observability and alerting
@@ -45,6 +70,12 @@ The project evolved from a monolithic backend into a microservices-oriented arch
 - React.js (with React Router)
 - Tailwind CSS for UI styling
 - Axios for API requests
+
+### Mobile
+
+- React Native
+- Axios for API communication
+- Shared backend APIs with the web platform
 
 ### Backend:
 
@@ -72,6 +103,43 @@ Swagger provides a clear and interactive interface to:
 
 ### Access Swagger UI
 `http://localhost:4000/api-docs`
+
+## 🤖 AI-Powered Doctor Recommendation
+
+The system includes an **AI-powered doctor recommendation feature** that helps patients choose the most suitable doctor based on their symptoms.
+
+This feature acts as a **decision-support tool** and does **not diagnose diseases**. It guides users toward the appropriate medical specialty before booking an appointment.
+
+---
+
+### 🔍 How It Works
+
+1. The patient enters symptoms (e.g., *chest pain, headache, skin rash*).
+2. The backend sends the symptoms along with available doctors to an AI model.
+3. The AI analyzes symptoms and recommends relevant doctors **only from supported specialities**:
+   - General physician  
+   - Gynecologist  
+   - Dermatologist  
+   - Pediatricians  
+   - Neurologist  
+   - Gastroenterologist  
+4. The AI returns:
+   - Doctor name  
+   - Speciality  
+   - Short reasoning for recommendation
+5. The frontend displays these recommendations, allowing users to quickly proceed with booking.
+
+---
+
+### 🧠 Design Principles
+
+- AI is **strictly constrained** by backend rules and prompt controls  
+- Recommendations are limited to **existing doctors in the system**
+- Business logic remains backend-driven
+- AI is used only for **ranking and explanation**, not diagnosis
+- Fully optional feature that does not affect core booking flow
+
+---
 
 ## 🧱 Microservices
 
